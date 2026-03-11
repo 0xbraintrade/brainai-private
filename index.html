@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0e17">
+<title>brainAI Portfolio</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root {
+  --bg: #0a0e17; --card: #131a2b; --card2: #182035; --border: rgba(255,255,255,0.06);
+  --text: #f0f2f5; --dim: #5a6478; --green: #00d26a; --green-bg: rgba(0,210,106,0.1);
+  --red: #ff4757; --red-bg: rgba(255,71,87,0.1); --blue: #4facfe; --purple: #a855f7;
+  --radius: 16px; --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; font-size: 14px; -webkit-text-size-adjust: 100%; min-height: 100vh; overflow-x: hidden; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+
+/* Password Screen */
+.password-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.password-box { background: var(--card); border-radius: var(--radius); padding: 32px; max-width: 400px; width: 100%; border: 1px solid var(--border); }
+.password-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+.password-subtitle { color: var(--dim); text-align: center; margin-bottom: 24px; }
+.password-input { width: 100%; padding: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 16px; margin-bottom: 16px; }
+.password-input:focus { outline: none; border-color: var(--purple); }
+.password-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--purple), var(--blue)); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+.password-error { color: var(--red); text-align: center; margin-top: 12px; font-size: 14px; }
+
+/* Main Content */
+.main-content { display: none; }
+
+/* App Header */
+.app-header { padding: 20px 20px 12px; display: flex; justify-content: space-between; align-items: center; }
+.app-title { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.app-title .skull { font-size: 22px; }
+.app-title .name { background: linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.private-badge { display: flex; align-items: center; gap: 6px; background: rgba(168,85,247,0.1); padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; color: var(--purple); letter-spacing: 0.5px; }
+.private-badge::before { content: '🔒'; margin-right: 2px; }
+
+/* Hero Card */
+.hero { margin: 8px 16px 24px; background: linear-gradient(145deg, var(--card), var(--card2)); border-radius: var(--radius); padding: 24px 20px; border: 1px solid var(--border); }
+.hero-label { font-size: 13px; color: var(--dim); font-weight: 600; margin-bottom: 4px; }
+.hero-value { font-size: 38px; font-weight: 900; letter-spacing: -1px; line-height: 1.1; }
+.hero-pct { font-size: 15px; font-weight: 700; margin-top: 4px; }
+.hero-link { margin-top: 12px; }
+.hero-link a { color: var(--blue); text-decoration: none; font-size: 13px; font-weight: 600; }
+
+/* Section */
+.section { margin: 0 16px 24px; background: var(--card); border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); }
+.section-title { font-size: 18px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.section-subtitle { color: var(--dim); font-size: 13px; margin-bottom: 16px; }
+
+/* Portfolio Grid */
+.portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.portfolio-item { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.portfolio-asset { font-size: 14px; font-weight: 700; color: var(--dim); margin-bottom: 4px; }
+.portfolio-amount { font-size: 20px; font-weight: 800; }
+.portfolio-note { font-size: 11px; color: var(--red); margin-top: 4px; font-weight: 600; }
+.portfolio-note.moving { color: var(--blue); }
+
+/* Investment Cards */
+.investment-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+.investment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.investment-name { font-size: 16px; font-weight: 700; }
+.investment-name a { color: var(--blue); text-decoration: none; }
+.investment-amount { font-size: 16px; font-weight: 800; color: var(--green); }
+.investment-desc { color: var(--dim); font-size: 13px; line-height: 1.4; }
+
+/* Structure Options */
+.structure-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.structure-option { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+.structure-option.recommended { border-color: var(--green); background: var(--green-bg); }
+.option-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.option-title.recommended { color: var(--green); }
+.option-pros { margin-bottom: 12px; }
+.option-pros h4 { font-size: 13px; color: var(--green); font-weight: 600; margin-bottom: 6px; }
+.option-cons h4 { font-size: 13px; color: var(--red); font-weight: 600; margin-bottom: 6px; }
+.option-list { list-style: none; }
+.option-list li { font-size: 12px; color: var(--dim); margin-bottom: 3px; padding-left: 12px; position: relative; }
+.option-list li::before { content: '•'; position: absolute; left: 0; color: var(--green); }
+.option-cons .option-list li::before { color: var(--red); }
+
+/* Capital Requirements */
+.capital-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.capital-item { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+.capital-label { font-size: 12px; color: var(--dim); font-weight: 600; margin-bottom: 4px; }
+.capital-value { font-size: 24px; font-weight: 800; }
+.capital-current { color: var(--blue); }
+.capital-needed { color: var(--red); }
+.capital-total { color: var(--green); }
+
+.strategy-points { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 16px; }
+.strategy-points h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--green); }
+.strategy-points ul { list-style: none; }
+.strategy-points li { font-size: 13px; color: var(--dim); margin-bottom: 8px; padding-left: 16px; position: relative; }
+.strategy-points li::before { content: '→'; position: absolute; left: 0; color: var(--green); }
+
+@media (max-width: 600px) {
+  .structure-options { grid-template-columns: 1fr; }
+  .capital-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Password Screen -->
+<div class="password-screen" id="passwordScreen">
+  <div class="password-box">
+    <div class="password-title">🧠 brainAI</div>
+    <div class="password-subtitle">Enter password to view portfolio</div>
+    <input type="password" class="password-input" id="passwordInput" placeholder="Password">
+    <button class="password-btn" onclick="checkPassword()">Access Portfolio</button>
+    <div class="password-error" id="passwordError"></div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+  <div class="app-header">
+    <div class="app-title">
+      <span class="skull">🧠</span>
+      <span class="name">brainAI</span>
+    </div>
+    <div class="private-badge">PRIVATE</div>
+  </div>
+
+  <!-- 1. Trading Capital -->
+  <div class="hero">
+    <div class="hero-label">TRADING CAPITAL</div>
+    <div class="hero-value">$200,000</div>
+    <div class="hero-pct">AI Fund Allocation</div>
+    <div class="hero-link">
+      <a href="https://0xbraintrade.github.io/fund1-dashboard/" target="_blank">→ View AI Fund Dashboard</a>
+    </div>
+  </div>
+
+  <!-- 2. Portfolio -->
+  <div class="section">
+    <div class="section-title">💼 Portfolio Holdings</div>
+    <div class="portfolio-grid">
+      <div class="portfolio-item">
+        <div class="portfolio-asset">BTC</div>
+        <div class="portfolio-amount">3</div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-asset">NTRN</div>
+        <div class="portfolio-amount">1,000,000</div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-asset">ETH</div>
+        <div class="portfolio-amount">22.2</div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-asset">SOL</div>
+        <div class="portfolio-amount">250</div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-asset">MARS</div>
+        <div class="portfolio-amount">1,000,000</div>
+        <div class="portfolio-note">illiquid</div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-asset">PRYZM</div>
+        <div class="portfolio-amount">1,333,333</div>
+        <div class="portfolio-note moving">moving to Ethereum</div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-asset">ASTRO</div>
+        <div class="portfolio-amount">1,000,000</div>
+        <div class="portfolio-note">illiquid</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Seed Investments -->
+  <div class="section">
+    <div class="section-title">🌱 Seed Investments</div>
+    
+    <div class="investment-card">
+      <div class="investment-header">
+        <div class="investment-name"><a href="https://shred.fi/" target="_blank">SHred</a></div>
+        <div class="investment-amount">$50,000</div>
+      </div>
+      <div class="investment-desc">
+        Advanced trading infrastructure and analytics platform providing institutional-grade tools for DeFi and crypto markets.
+      </div>
+    </div>
+
+    <div class="investment-card">
+      <div class="investment-header">
+        <div class="investment-name">structured-maxBTC</div>
+        <div class="investment-amount">$50,000</div>
+      </div>
+      <div class="investment-desc">
+        Structured BTC yield products offering enhanced returns through sophisticated derivatives strategies and risk management.
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. brainAI Capital Required -->
+  <div class="section">
+    <div class="section-title">💰 Capital Requirements</div>
+    <div class="section-subtitle">Additional funding needed to scale trading operations and cover operational costs</div>
+    
+    <div class="capital-grid">
+      <div class="capital-item">
+        <div class="capital-label">CURRENT CAPITAL</div>
+        <div class="capital-value capital-current">$200K</div>
+      </div>
+      <div class="capital-item">
+        <div class="capital-label">ADDITIONAL NEEDED</div>
+        <div class="capital-value capital-needed">$400-500K</div>
+      </div>
+      <div class="capital-item">
+        <div class="capital-label">TOTAL TARGET</div>
+        <div class="capital-value capital-total">$600-700K</div>
+      </div>
+    </div>
+
+    <div class="strategy-points">
+      <h4>Low-Risk BTC Trading Strategy (5-10% Monthly Returns)</h4>
+      <ul>
+        <li>Systematic market-making on crypto prediction markets</li>
+        <li>Delta-neutral strategies minimizing directional risk</li>
+        <li>Arbitrage opportunities between spot and derivatives</li>
+        <li>Returns fund brainAI operations (~$50-70K/month Anthropic credits)</li>
+        <li>Scale AgentFolio and other AI projects sustainably</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5. Structure Options -->
+  <div class="section">
+    <div class="section-title">🏛️ brainAI Structure Options</div>
+    <div class="section-subtitle">Comparing traditional corporate structure vs decentralized token/DAO approach</div>
+    
+    <div class="structure-options">
+      <div class="structure-option">
+        <div class="option-title">Traditional Company</div>
+        <div class="option-pros">
+          <h4>Pros:</h4>
+          <ul class="option-list">
+            <li>Legal protection & clarity</li>
+            <li>Established investor frameworks</li>
+            <li>Banking & compliance easier</li>
+            <li>IP protection</li>
+          </ul>
+        </div>
+        <div class="option-cons">
+          <h4>Cons:</h4>
+          <ul class="option-list">
+            <li>Heavy regulatory overhead</li>
+            <li>Limited global reach</li>
+            <li>Complex equity structures</li>
+            <li>Slower decision making</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="structure-option recommended">
+        <div class="option-title recommended">Token + DAO (Recommended)</div>
+        <div class="option-pros">
+          <h4>Pros:</h4>
+          <ul class="option-list">
+            <li>Global, permissionless access</li>
+            <li>Liquidity for stakeholders</li>
+            <li>Aligned incentives via tokens</li>
+            <li>Community governance</li>
+            <li>Composable with DeFi</li>
+            <li>Revenue sharing through tokens</li>
+          </ul>
+        </div>
+        <div class="option-cons">
+          <h4>Cons:</h4>
+          <ul class="option-list">
+            <li>Regulatory uncertainty</li>
+            <li>Technical complexity</li>
+            <li>Governance challenges</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-points">
+      <h4>Why Token/DAO is Superior for brainAI:</h4>
+      <ul>
+        <li>Native crypto business model aligns with token economics</li>
+        <li>Global talent acquisition without visa restrictions</li>
+        <li>Direct integration with trading profits via smart contracts</li>
+        <li>Transparent, on-chain revenue distribution</li>
+        <li>Community-driven development of AI agents</li>
+        <li>Composability with existing DeFi protocols for yield</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+function checkPassword() {
+  const input = document.getElementById('passwordInput');
+  const error = document.getElementById('passwordError');
+  const password = input.value;
+  
+  // Set your password here
+  if (password === 'brainAI2026' || password === 'brain123') {
+    document.getElementById('passwordScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  } else {
+    error.textContent = 'Incorrect password';
+    input.value = '';
+  }
+}
+
+// Allow Enter key to submit password
+document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    checkPassword();
+  }
+});
+</script>
+
+</body>
+</html>
